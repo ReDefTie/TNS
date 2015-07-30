@@ -1,0 +1,467 @@
+<!doctype html>
+<head>
+<meta charset="utf-8">
+
+<title>Study</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.core.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.default.css" rel="stylesheet">
+
+<style type="text/css">
+
+html body {
+    background-color: #e4eaeb;
+}
+
+.box{
+padding-top:20px;
+margin-top:20px;
+background-color:white;
+   -moz-box-shadow:     2px 2px 3px 3px #BBB;
+   -webkit-box-shadow:  2px 2px 3px 3px #BBB;
+   box-shadow:          2px 2px 3px 3px #BBB;
+   padding:30px;
+}
+
+.box p {text-align: left; color: #000; }
+
+#categinfo { font-size: 10px; width:120px; left:20px; text-align: justify; 
+}
+
+#users { list-style-type: none; }
+#users { clear: left; }
+
+div.profcnt { 
+    background-color: #ffffff;
+    border-top-width: 0px;
+	border-bottom-width:1px;
+	border-left-width:0px;
+	border-right-width:0px;
+	border-right-width:0px;
+    border-style: solid;
+	border-color: lightgray;
+    margin: 0px;
+height:80px;
+padding: 10px; 
+}
+
+div.profcntname { padding-top: 6px;}
+
+div.profcntbtns {
+    margin-top: 4px;
+}
+
+#users {
+margin:0px;
+padding:0px;
+}
+
+#users li .thumbnail { 
+float: left; 
+position: relative;  
+width: 60px; 
+border: 0px solid;
+border-radius: 10px;
+margin-right: 15px;
+  margin-bottom: 0px;}
+}
+#users li .content { display: block; margin-left: 0px !important; }
+#users li .author { font-weight: bold; display: block; }
+
+
+
+#submitResponses { margin-top: 50px; margin-bottom: 50px; margin-left: 110px; }
+
+.btn-disabled { color: #BEBEBE !important; }
+
+
+.btn-primary{
+background-image: linear-gradient(bottom, #484848 0%, #484848 100%) !important;
+}
+
+
+.btn-qual{
+  display:block;
+        margin:0px auto;
+		background-color: #777777;
+  font-size: 16px;
+  text-decoration: none;
+  color: #efefef;
+  padding: 10px 35px;
+  padding-right: 40px;
+  background-image: linear-gradient(bottom, #484848 0%, #484848 100%);
+  border-radius: 5px;
+  box-shadow: inset 0px 0px 0px #ffffff, 0px 2px 0px 0px #444444, 0px 5px 5px rgba(0, 0, 0, 0.2);
+  border: 0px solid;
+  margin-top: 50px;
+  margin-bottom: 15px;
+  text-align: center;
+  -webkit-appearance: none;
+  position:
+}
+
+.btn-qual:hover,
+.btn-qual:focus,
+.btn-qual:active,
+.btn-qual.active,
+.open .dropdown-toggle.btn-qual {
+  color: #efefef;
+   border: 0px solid;
+}
+
+.btn-qual:active,
+.btn-qual.active,
+.open .dropdown-toggle.btn-qual {
+  background-image: none;
+  background-color: #lightgray;
+     border: 0px solid;
+
+}
+
+.btn-qual.disabled,
+.btn-qual[disabled],
+fieldset[disabled] .btn-qual,
+.btn-qual.disabled:hover,
+.btn-qual[disabled]:hover,
+fieldset[disabled] .btn-qual:hover,
+.btn-qual.disabled:focus,
+.btn-qual[disabled]:focus,
+fieldset[disabled] .btn-qual:focus,
+.btn-qual.disabled:active,
+.btn-qual[disabled]:active,
+fieldset[disabled] .btn-qual:active,
+.btn-qual.disabled.active,
+.btn-qual[disabled].active,
+fieldset[disabled] .btn-qual.active {
+  background-color: #428bca;
+  border-color: #357ebd;
+}
+
+.btn-qual .badge {
+  color: #428bca;
+  background-color: #fff;
+}
+
+</style>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/oauth-io/0.9.0/oauth.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.2/handlebars.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/alertify.js/0.3.11/alertify.min.js"></script>
+<script type="text/javascript" src="https://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+
+<script type="text/javascript">
+var $jQ = jQuery.noConflict(); // mapping jQuery to $jQ rather than $
+$jQ(document).ready(function() {
+
+/* --- Settings Begin --- */
+var useOauth = true; // if useOauth is true, the user will be asked to login 
+                      // .. using the oauth.io api, else some sample json is used
+                      // .. can only work when opening a file from a browser such
+                      // .. that it has http:// infront (not local to the pc)
+var sampleJsonUrl = "https://dl.dropboxusercontent.com/u/8615956/jsontw.txt";
+
+// replace this key with your own account key once you signed up at oauth.io
+var oauthPublicKey = "###";
+
+// replace these keys with your own account keys once you signed up at parse.com
+var parseAppId     = "###";
+var parseClientId  = "###";
+
+// redirect after submit button
+var redirectActive = true; // if false, it will just popup a box with the url
+var redirectUrl    = "###"; // url will be 
+                      // .. extended with an Id indexing the stored responses
+                      // .. on parse.com automatically
+
+// questionaire specific
+var numUsers       = 50; // number of users to display for classification
+
+// debug mode
+var outputConsole  = true; // if turned to false, all console messages 
+                          // .. will be surpressed                                  
+
+/* --- Settings End --- */
+
+$jQ('#twitterConnect').hide();
+$jQ('#categinfo').hide();
+//$jQ('#consent').hide();//remove if oauth enabled
+$jQ('#btn-consent').on('click', function(){
+$jQ('#consent').hide();
+$jQ('#twitterConnect').show();
+});
+
+
+// turns off any output to the console if outputConsole setting is false
+if(outputConsole == false){
+    if(!window.console) window.console = {};
+    var methods = ["log", "debug", "warn", "info"];
+    for(var i=0;i<methods.length;i++){
+    	console[methods[i]] = function(){};
+    }
+}
+
+// hello world
+console.log('jquery loaded');
+
+// auth yes, or no?
+if(useOauth == false) {    
+  $jQ.getJSON(sampleJsonUrl,renderFriendsList); 
+} else {
+  $jQ('#btn-connect').on('click',function() {
+    OAuth.initialize(oauthPublicKey);
+    OAuth.popup('twitter', initTwitterApi);
+  });
+}
+
+
+
+// Twitter API requests; data sent to Parse
+function initTwitterApi(err, res) {
+  window.api = res;
+  api.get('/1.1/friends/list.json?count=200').done(renderFriendsList);
+  api.get('/1.1/account/verify_credentials.json').done(savUserBasic);
+}
+
+
+function savUserBasic(data){
+window.userID=data.id;
+window.userBasicData = data;
+}
+
+
+
+// helper function to trim an array to specified length
+function trim(array, number) {
+  var x=Math.round(0.1*number);
+  array.splice(number-x+1,x);
+  array.splice(0,x);
+  return array;
+}
+
+// helper function to shuffle an array
+function shuffle(array) {
+  var currentIndex = array.length
+    , temporaryValue
+    , randomIndex;
+
+  // while there remain elements to shuffle
+  while (0 !== currentIndex) {
+
+    // pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // and swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+// helper function to ...
+function select(array, number){
+  var select=array.length-number;
+  array.splice(0,select);  
+  return array;
+}
+// bind clicks on rating-class buttons
+window.categ1Data = [];
+window.categALLData = [];
+
+// render twitter friends json
+function renderFriendsList(data) {
+    if(userBasicData.friends_count<=30) {
+	    $jQ('#twitterConnect').hide('fast');
+        $jQ('#endNotEnoughFriends').show();
+	
+	}else{
+    console.log('called renderFriendsList');
+    console.log(data);
+    
+    window.ddd = data;
+    
+    processedData = select(shuffle(trim(data.users,data.users.length)), numUsers);
+    processedData = { "users": processedData };
+    var template = Handlebars.compile($jQ('#entry-template').html());
+    console.log('n');
+    $jQ('#twitterConnect').hide('fast');
+    $jQ('#classifyUsers').html(template(processedData)).show();
+       var newEntry1 = {'uid': userID};
+    categALLData.push(newEntry1);
+    categ1Data.push(newEntry1);
+$jQ('#categinfo').hide();
+//window.onscroll.$jQ('#categinfo').show();
+window.onscroll = scroll;
+function scroll () {
+var yoffset = window.pageYOffset;
+if(yoffset>=350) {$jQ('#categinfo').show();}else{console.log(' ')};
+}
+};
+}
+
+
+
+$jQ(document).on('click', '.rating', function() {
+    var val = $jQ(this).attr('data-val');
+    var name = $jQ(this).attr('data-name')
+    var ID = $jQ(this).attr('data-target');
+    var handle = $jQ(this).attr('data-handle');
+    var picurl = $jQ(this).attr('data-pic');
+    var newEntry = {'value': val, 'ID': ID, 'name':name, 'handle': handle, 'picurl': picurl};    
+    console.log(newEntry.value)
+   
+    if (newEntry.value==1) {
+        categ1Data.push(newEntry);
+    } 
+    else {
+         categALLData.push(newEntry);
+       };
+    $jQ('.rating[data-target="'+ID+'"][data-val="'+val+'"]').addClass('btn-primary');
+    $jQ('.rating[data-target="'+ID+'"][data-val!="'+val+'"]').addClass('btn-disabled');
+    $jQ('.rating[data-target="'+ID+'"]').attr('disabled','disabled');
+
+});
+
+// bind clicks on submitResponse-id button
+// window.resultsData = [];
+$jQ(document).on('click', '#submitResponses', function() {
+    
+    if(categALLData.length+categ1Data.length < 40) {
+     alertify.error("Please classify all users");
+   } else {
+    saveResponse();
+   }
+
+});
+
+function saveResponse() {
+
+  // replace this with tokens from your own parse account, once you set one up
+  Parse.initialize(parseAppId, parseClientId);
+  
+  var TwContacts = Parse.Object.extend("TwContacts1");
+  var twContacts = new TwContacts();
+  
+  var AllContacts = Parse.Object.extend("AllContacts1");
+  var allContacts = new AllContacts();
+  var dataToSave1 = {"responses": categALLData};
+  allContacts.save(dataToSave1,{
+  });
+  
+  var UserBasic = Parse.Object.extend("UserBasic1");
+  var userBasic = new UserBasic();
+  var dataToSave2 = {"responses": userBasicData};
+  userBasic.save(dataToSave2,{
+  });
+
+
+  var dataToSave = {"responses": categ1Data};
+  twContacts.save(dataToSave, {
+    success: function(object) {
+      var objectId = object.id;
+      window.redirectTo = redirectUrl +'&uid=' + userID +'&resultsId=' + objectId;
+      if(redirectActive == false) {
+        alert('saved, would now redirect to: ' + redirectTo )
+      } else {
+        window.location.href = redirectTo;
+      }
+    },
+    error: function(model, error) {
+      console.log('an error occured.');
+      console.log(error);
+    }
+  });
+
+}
+
+});
+  
+  
+  
+  
+  
+  
+  
+</script>
+
+</head>
+<body>
+
+<div class="container">
+<div class="row">
+  
+	<div id="consent" class="col-md-10 box">
+		<h2>Hello,</h2>
+		<br>
+		<p> Welcome to this study. </p>
+
+<span >[Informed consent form]</span>
+		<button id="btn-consent" class="btn btn-qual">I hereby confirm that I am over 18 years old and agree to participate</button>
+	</div>
+
+
+
+	<div id="twitterConnect" class="box col-md-10" style="display: none;">
+		<h2>Thank you for taking part in our study!</h2>		<br>
+
+		<p>After pressing the button below, you will be redirected you to a secure, externally hosted authentication service. We need your permission to access the list of your Twitter connections. Your authentication will grant us only one-time access to your public Twitter information, without any further permissions.</p>
+		<p>Because of frequently encountered errors with Internet Explorer, you can only participate if you use another browser.</p>
+		<button id="btn-connect" class="btn btn-qual">Connect with twitter</button>
+	</div>
+<div id="endNotEnoughFriends" class="box col-md-10" style="display: none;">
+		<h2>Unfortunately, you are not able to proceed</h2><br>
+		<p>This study is about social networks on Twitter. In order for us to conduct the study as planned, there is a minimum amount of people our participants should follow. You seem to follow too few people. </p><p><b>We apologize for the inconvenience and thank you once again for your interest! </b></p>
+	</div>
+	<div id="classifyUsers" style="display: none;">
+    </div>
+	
+<script id="entry-template" type="text/x-handlebars-template">
+	<div class="container"><div class="row">
+	<div id="categinfo" class="bs-docs-sidebar hidden-print affix">
+		<h3>Categories</h3>
+		<p><b>Twitter contact: </b>A person you encounter mainly on Twitter. Can be someone you also know in real life, distant colleague, public figure or other person of interest, etc. Important is that Twitter is where you most often encounter or interact with this person.</p>
+		<p><b>Outside of Twitter: </b>This is a person you encounter or interact with mainly outside of Twitter – face to face, telephone, other social networking sites, etc.</p>
+		<p><b>Non-human: </b>This is a corporate account, brand, promoter, spam, or other automated service.</p>
+	<p><b>No idea: </b>You do not know this account, have not seen it on your timeline, and have no clue whatsoever. Or you are completely unsure how to categorize it.</p>
+	</div>
+	<div class="box col-md-10 col-sm-10 col-sm-offset-2 col-xs-12">
+			<br><h3>Instructions</h3>
+<p>Below is a random selection of people you follow on Twitter. Please identify the people you encounter primarily on Twitter. To do this, classify each person in the list, into one of the categories described below. It is very important that you complete this classification as accurately as possible. The categories are: </p>
+    <p><span style="font-size:80%"><b>Twitter contact</b>: A person you encounter mainly on Twitter. Can be someone you also know in real life, distant colleague, public figure or other person of interest, etc. Important is that Twitter is where you most often encounter or interact with this person.
+	<br><b>Outside of Twitter</b>: This is a person you encounter or interact with mainly outside of Twitter – face to face, telephone, other social networking sites, etc.<br><b>Non-human</b>: This account is a corporate account, brand, promoter, spam, or other automated service.
+	<br><b>Other or no idea</b>: You do not know this account, have not seen it on your timeline, and have no clue whatsoever. Or you are completely unsure how to categorize it.</span></p>
+	<p>Once you select a category, you will not be able to edit your choice - just move on. Press the Proceed button when you are ready. </p>			<br>
+	<br>
+
+	<ul id="users">
+    {{#each users }}
+        <li>
+            <div class="profcnt">
+            <img class="thumbnail" src="{{ profile_image_url_https }}" />
+			<div class="profcntname">
+			<span style="font-weight: bold">{{ name}}</span><span style="color: gray; font-weight:normal;"> @{{screen_name}}</span>
+                <div class="profcntbtns">
+                <button class="btn btn-xs rating" data-val="1" data-target="{{ id }}" data-handle="{{screen_name}}" data-name="{{name}}" data-pic="{{profile_image_url}}">Twitter contact</button>
+                <button class="btn btn-xs rating" data-val="2" data-target="{{ id }}" data-handle="{{screen_name}}" data-name="{{name}}" data-pic="{{profile_image_url}}">Outside of Twitter</button>
+                <button class="btn btn-xs rating" data-val="3" data-target="{{ id }}" data-handle="{{screen_name}}" data-name="{{name}}" data-pic="{{profile_image_url}}">Non-human</button>
+                <button class="btn btn-xs rating" data-val="4" data-target="{{ id }}" data-handle="{{screen_name}}" data-name="{{name}}" data-pic="{{profile_image_url}}">No idea</button>
+				</div>
+			</div>
+			</div>
+		</li>
+    {{/each}}
+    </ul>
+	<button id="submitResponses" class="btn btn-qual">Proceed</button>
+	</div>
+	</div>
+	</div>
+</script>
+</div>
+</div>
+
+</body>
+</html>
